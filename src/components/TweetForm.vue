@@ -1,35 +1,63 @@
 <template>
-  <div class="tweet-form container">
-    <form>
-        <input class="form-control" placeholder="Tu nombre" />
-        <textarea name="" id="" class="form-control" rows="3" placeholder="Escribe tu tweet"></textarea>
-        <button type="button" class="btn btn-primary">Enviar</button>
+  <div class="tweet-form container" :class="{ open: showForm }">
+    <form @submit.prevent="sendTweet">
+      <input class="form-control" placeholder="Tu nombre" v-model="userName"/>
+      <textarea
+        v-model="tweet"
+        class="form-control"
+        rows="3"
+        placeholder="Escribe tu tweet"
+      ></textarea>
+      <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
   </div>
 </template>
 
 <script>
-export default {
+import { ref } from "vue";
+import {saveTweetApi} from "../api/tweet"
 
-}
+export default {
+  props: {
+    showForm: Boolean,
+  },
+  setup() {
+    let userName = ref("");
+    let tweet = ref("");
+
+    const sendTweet = () => {
+      saveTweetApi(tweet.value, userName.value)
+    };
+    return {
+      sendTweet,
+      userName,
+      tweet,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
- .tweet-form {
-    margin-top: 20px;
-    overflow: hidden;
+.tweet-form {
+  margin-top: 20px;
+  height: 0;
+  overflow: hidden;
 
-    form{
-        margin-bottom: 50px;
+  &.open {
+    height: auto;
+  }
 
-        input {
-            margin-bottom: 10px;
-        }
+  form {
+    margin-bottom: 50px;
 
-        button {
-            width: 100%;
-            margin-top: 10px;
-        }
+    input {
+      margin-bottom: 10px;
     }
- }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+}
 </style>
