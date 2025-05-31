@@ -1,24 +1,50 @@
 <template>
   <div class="container">
     <h1 class="text-center mb-4">Lista de Twits</h1>
+    <p v-if="tweets.length === 0">Crea un tweet</p>
     <div class="tweet" v-for="tweet in tweets" :key="tweet.id">
       <p class="tweet__title">{{ tweet.userName }}</p>
       <p class="tweet__text">{{ tweet.tweet }}</p>
-      <span>{{ tweet.createdAt }}</span>
+      <span>{{ formatDate(tweet.createdAt) }}</span>
+      <Close @click="deleteTweet(tweet.id)"/>
     </div>
   </div>
 </template>
 
 <script>
+import moment from "moment";
+import "moment/locale/es";
+import { Close } from "./Icons/index";
+import {deleteTweetApi} from "../api/tweet"
+
 export default {
   props: {
     tweets: Array,
+    reloadTweets: Function
   },
-  setup(props) {},
+  components: {
+    Close,
+  },
+
+  setup(props) {
+    const formatDate = (data) => {
+      return moment(data).fromNow();
+    };
+
+    const deleteTweet = (idTweet) => {
+      deleteTweetApi(idTweet)
+      props.reloadTweets();
+    }
+
+    return {
+      formatDate,
+      deleteTweet
+    };
+  },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .tweet {
   position: relative;
   border: 1px solid #ccc;
@@ -54,6 +80,14 @@ export default {
     background-color: #fff;
     padding: 0 20px;
     border: 1px solid #ccc;
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+    &:hover {
+      cursor: pointer;
+      color: #f00;
+    }
   }
 }
 </style>
