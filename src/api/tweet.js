@@ -22,6 +22,7 @@ export function saveTweetApi(tweet, userName) {
       userName,
       createdAt: new Date(),
     });
+    localStorage.setItem(TWEETS, JSON.stringify(tweets));
   }
 }
 

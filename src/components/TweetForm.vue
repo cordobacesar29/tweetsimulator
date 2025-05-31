@@ -1,7 +1,7 @@
 <template>
   <div class="tweet-form container" :class="{ open: showForm }">
     <form @submit.prevent="sendTweet">
-      <input class="form-control" placeholder="Tu nombre" v-model="userName"/>
+      <input class="form-control" placeholder="Tu nombre" v-model="userName" />
       <textarea
         v-model="tweet"
         class="form-control"
@@ -15,18 +15,26 @@
 
 <script>
 import { ref } from "vue";
-import {saveTweetApi} from "../api/tweet"
+import { saveTweetApi } from "../api/tweet";
 
 export default {
   props: {
     showForm: Boolean,
+    reloadTweets: Function,
+    openCloseForm: Function,
   },
-  setup() {
+  setup(props) {
     let userName = ref("");
     let tweet = ref("");
 
     const sendTweet = () => {
-      saveTweetApi(tweet.value, userName.value)
+      if (!tweet.value || !userName.value) return;
+      
+      saveTweetApi(tweet.value, userName.value);
+      tweet.value = "";
+      userName.value = "";
+      props.reloadTweets();
+      props.openCloseForm();
     };
     return {
       sendTweet,
